@@ -27,6 +27,7 @@ suspend fun sendHandler(
   val rektoro = Listener.getOrPut(subject.id) { bot }
   // 若不是负责人则返回
   if (rektoro != bot) return
+  if (sender.id.toString() == "1606959418") return
 
   MiraiDb.putMsgSource(event.source)
   // 构建消息
