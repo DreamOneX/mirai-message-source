@@ -7,7 +7,7 @@ plugins {
   id("net.mamoe.mirai-console") version "2.10.0"
 }
 group = "org.meowcat"
-version = "1.2.0-rc2-fix"
+version = "1.2.0"
 tasks.compileKotlin {
   kotlinOptions {
     jvmTarget = "1.8"
@@ -62,7 +62,7 @@ mirai {
 }
 dependencies {
   compileOnly("io.nats:jnats:2.14.0")
-  implementation("org.rocksdb:rocksdbjni:7.0.4")
+  implementation("org.rocksdb:rocksdbjni:7.1.2")
   implementation("com.github.gotson:webp-imageio:0.2.2")
 
   compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
