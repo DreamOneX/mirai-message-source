@@ -107,10 +107,7 @@ osx-x86_64(){
 }
 all_target(){
 	linux-x86_64
-	linux-x86
 	linux-aarch64
-	windows-x86_64
-	osx-x86_64
 	cd packages
 	prefix=mirai-
 	for files in $(ls *.jar)
