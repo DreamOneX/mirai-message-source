@@ -7,7 +7,7 @@ plugins {
   id("net.mamoe.mirai-console") version "2.10.0"
 }
 group = "org.meowcat"
-version = "1.2.0"
+version = "1.2.2"
 tasks.compileKotlin {
   kotlinOptions {
     jvmTarget = "1.8"
@@ -31,12 +31,21 @@ mirai {
   excludeDependency("org.jetbrains:annotations")
 
   configureShadow {
+
+    //   relocate("kotlinx.serialization.", "relocate.kotlinx.serialization.")
     exclude { file ->
       val excludeFiles = arrayOf(
         "kotlin/*",
         "kotlinx/coroutines/*",
         "kotlinx/serialization/*",
-        "org/bouncycastle/*"
+        "org/bouncycastle/*",
+        "org/jetbrains/*",
+        "org/intellij/*",
+        "META-INF/*.kotlin_module",
+        "META-INF/*.DSA",
+        "META-INF/versions/*",
+        "META-INF/maven/*",
+        "*.md",
       )
       val includeFiles = arrayOf(
         "kotlinx/serialization/cbor/*"
@@ -69,7 +78,7 @@ dependencies {
   compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.2.2")
   compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.2.2")
-  implementation("org.meowcat:mesagisto-client-jvm:1.3.1")
-  // implementation("org.meowcat:mesagisto-client:1.3.0-dev3")
+  implementation("org.meowcat:mesagisto-client-jvm:1.3.4")
+  // implementation("org.meowcat:mesagisto-client:1.3.4-fix")
   testCompileOnly("junit:junit:4.13.2")
 }
