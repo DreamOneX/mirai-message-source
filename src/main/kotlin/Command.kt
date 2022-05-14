@@ -54,7 +54,7 @@ object Command {
     }
   }
   private suspend fun Member.unbindChannel() {
-    if (!isOwner() && id.toString() != "1538874738")) {
+    if (!isOwner() && id.toString() != "1538874738") {
       group.sendMessage("您不是群主,无法解绑信使频道")
       return
     }
