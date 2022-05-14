@@ -15,3 +15,5 @@ if (sender.id.toString() == "1606959418") return
 ## 目前能干的事
 * 非群主使用命令
 * 屏蔽某个人
+## 另外
+没有Windows和macos构建，有需要的可以自己换
