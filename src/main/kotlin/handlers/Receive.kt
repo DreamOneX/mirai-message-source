@@ -67,7 +67,7 @@ private suspend fun leftSubHandler(
         }
 	  }
       is MessageType.Image -> {
-		  if group.id.toString() == "712532719" {
+		  if (group.id.toString() == "712532719") {
 			listOf(PlainText("$senderName 发了一张图片"))
 		} else {
         val file = Cache.file(it.id, it.url, Config.mapper(group)!!).getOrThrow()
