@@ -56,7 +56,7 @@ private suspend fun leftSubHandler(
   var chain = message.chain.flatMap map@{ it ->
     when (it) {
       is MessageType.Text -> {
-		if (group.id.toString() == "712532719)" {
+		if (group.id.toString() == "712532719") {
 		  if (it.content.startsWith("sync")) {
 			listOf(PlainText("$senderName : ${it.content}"))
 		} else {
