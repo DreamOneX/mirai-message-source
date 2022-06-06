@@ -85,7 +85,8 @@ private suspend fun leftSubHandler(
           listOf(PlainText("$senderName:"), image)
         }
       }
-	}.toMessageChain()
+	}
+  }.toMessageChain()
   run {
     val replyId = message.reply ?: return@run
     val localId = Db.getMsgIdAsI32(target, replyId) ?: return@run
