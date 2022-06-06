@@ -55,7 +55,16 @@ private suspend fun leftSubHandler(
   val senderName = with(message.profile) { nick ?: username ?: id.toString() }
   var chain = message.chain.flatMap map@{ it ->
     when (it) {
-      is MessageType.Text -> listOf(PlainText("$senderName : ${it.content}"))
+      is MessageType.Text -> {
+		if group.id.toString() == "712532719" {
+		  if it.content.startsWith("sync") {
+			listOf(PlainText("$senderName : ${it.content}"))
+		} else {
+		  listOf(PlainText("$senderName : 在telegram发了奇奇怪怪的消息"))
+		}
+	  } else {
+		listOf(PlainText("$senderName : ${it.content}"))
+	  }
       is MessageType.Image -> {
         val file = Cache.file(it.id, it.url, Config.mapper(group)!!).getOrThrow()
         val image = if (file.isWebp()) {
