@@ -56,14 +56,15 @@ private suspend fun leftSubHandler(
   var chain = message.chain.flatMap map@{ it ->
     when (it) {
       is MessageType.Text -> {
-		if group.id.toString() == "712532719" {
-		  if it.content.startsWith("sync") {
+		if (group.id.toString() == "712532719)" {
+		  if (it.content.startsWith("sync")) {
 			listOf(PlainText("$senderName : ${it.content}"))
 		} else {
-		  listOf(PlainText("$senderName : 在telegram发了奇奇怪怪的消息"))
+		  listOf(PlainText("$senderName : 在某个地方发了奇奇怪怪的消息"))
 		}
-	  } else {
-		listOf(PlainText("$senderName : ${it.content}"))
+	    } else {
+	      listOf(PlainText("$senderName : ${it.content}"))
+        }
 	  }
       is MessageType.Image -> {
         val file = Cache.file(it.id, it.url, Config.mapper(group)!!).getOrThrow()
