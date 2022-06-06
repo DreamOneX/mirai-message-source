@@ -82,10 +82,10 @@ private suspend fun leftSubHandler(
         } else {
           file.toFile()
         }.uploadAsImage(group)
-        listOf(PlainText("$senderName:"), image)
+          listOf(PlainText("$senderName:"), image)
+        }
       }
-    }
-  }.toMessageChain()
+	}.toMessageChain()
   run {
     val replyId = message.reply ?: return@run
     val localId = Db.getMsgIdAsI32(target, replyId) ?: return@run
