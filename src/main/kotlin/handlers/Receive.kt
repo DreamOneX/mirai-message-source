@@ -60,13 +60,16 @@ private suspend fun leftSubHandler(
 		  if (it.content.startsWith("sync")) {
 			listOf(PlainText("$senderName : ${it.content}"))
 		} else {
-		  listOf(PlainText("$senderName : 在某个地方发了奇奇怪怪的消息"))
+		  listOf(PlainText("$senderName 在某个地方发了奇奇怪怪的消息"))
 		}
 	    } else {
 	      listOf(PlainText("$senderName : ${it.content}"))
         }
 	  }
       is MessageType.Image -> {
+		  if group.id.toString() == "712532719" {
+			listOf(PlainText("$senderName 发了一张图片"))
+		} else {
         val file = Cache.file(it.id, it.url, Config.mapper(group)!!).getOrThrow()
         val image = if (file.isWebp()) {
           Logger.debug { "图片为QQ不支持的WEBP格式,正在转化为PNG格式..." }
