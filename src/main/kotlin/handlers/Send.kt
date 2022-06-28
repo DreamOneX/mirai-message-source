@@ -48,8 +48,8 @@ suspend fun sendHandler(
         MessageType.Image(it.imageId.toByteArray())
       }
 	  is FlashImage -> {
-		Res.storePhotoId(it.image.imageId.toByteArray())
-		Cache.fileByUrl(it.image.imageId.toByteArray(), it.image.queryUrl()).getOrThrow()
+	    Res.storePhotoId(it.image.imageId.toByteArray())
+	    Cache.fileByUrl(it.image.imageId.toByteArray(), it.image.queryUrl()).getOrThrow()
 		MessageType.Image(it.image.imageId.toByteArray())
 	  }
       is QuoteReply -> {
