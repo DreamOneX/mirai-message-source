@@ -42,6 +42,9 @@ suspend fun sendHandler(
           MessageType.Text(it.content)
         } else null
       }
+	  is MarketFace -> {
+		MessageType.Text(it.name)
+	  }
       is Image -> {
         Res.storePhotoId(it.imageId.toByteArray())
         Cache.fileByUrl(it.imageId.toByteArray(), it.queryUrl()).getOrThrow()
