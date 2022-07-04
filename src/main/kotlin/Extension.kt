@@ -18,7 +18,6 @@ import kotlin.io.path.outputStream
 suspend fun Path.isWebp() = isWebp(this)
 
 suspend fun isWebp(path: Path): Boolean = runInterruptible fn@{
-  Thread.currentThread().contextClassLoader = Plugin::class.java.classLoader
   runCatching {
     path.inputStream().use {
       val iis = ImageIO.createImageInputStream(it)
@@ -32,8 +31,6 @@ suspend fun isWebp(path: Path): Boolean = runInterruptible fn@{
   }
 }.getOrThrow()
 suspend fun convertWebpToPng(from: Path, to: Path) = runInterruptible {
-  Thread.currentThread().contextClassLoader = Plugin::class.java.classLoader
-  // fixme use thread-local
   val reader = ImageIO.getImageReadersByMIMEType("image/webp").next()
   val readParam = WebPReadParam().apply {
     isBypassFiltering = true
@@ -74,3 +71,15 @@ inline fun Db.getMsgIdAsI32(
   target: Long,
   id: ByteArray
 ): Int? = getMsgId(target, id)?.toI32()
+
+inline fun switch(classLoader: ClassLoader, fn: () -> Result<Unit>): Result<Unit> {
+  val origin = Thread.currentThread().contextClassLoader
+  Thread.currentThread().contextClassLoader = classLoader
+  return try {
+    fn.invoke()
+  } catch (t: Throwable) {
+    Result.failure(t)
+  } finally {
+    Thread.currentThread().contextClassLoader = origin
+  }
+}

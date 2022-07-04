@@ -9,9 +9,11 @@ import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.event.subscribeAlways
 import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
+import org.fusesource.leveldbjni.internal.NativeDB
 import org.meowcat.mesagisto.client.*
 import org.meowcat.mesagisto.mirai.handlers.MiraiListener
 import org.meowcat.mesagisto.mirai.handlers.Receive
+import javax.imageio.ImageIO
 
 object Plugin : KotlinPlugin(
   JvmPluginDescription(
@@ -31,13 +33,18 @@ object Plugin : KotlinPlugin(
       logger.warning("Mesagisto信使未启用!")
       return
     }
+    // SPI And JNI related things
+    switch(jvmPluginClasspath.pluginClassLoader) {
+      ImageIO.scanForPlugins()
+      NativeDB.LIBRARY.load()
+      Result.success(Unit)
+    }.getOrThrow()
+
     Logger.bridgeToMirai(logger)
     MesagistoConfig.builder {
       name = "mirai"
       natsAddress = Config.nats.address
-      cipherEnable = Config.cipher.enable
       cipherKey = Config.cipher.key
-      cipherRefusePlain = Config.cipher.refusePlain
       proxyEnable = Config.proxy.enable
       proxyUri = Config.proxy.address
       resolvePhotoUrl = { uid, _ ->

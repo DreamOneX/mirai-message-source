@@ -1,6 +1,5 @@
 package org.meowcat.mesagisto.mirai
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.value
@@ -23,7 +22,7 @@ object Config : AutoSavePluginConfig("mesagisto") {
 
 @Serializable
 data class NatsConfig(
-  val address: String = "nats://itsusinn.site:4222"
+  val address: String = "nats://nats.mesagisto.org:4222"
 )
 @Serializable
 data class ProxyConfig(
@@ -32,8 +31,5 @@ data class ProxyConfig(
 )
 @Serializable
 data class CipherConfig(
-  val enable: Boolean = true,
-  val key: String = "this-is-an-example-key",
-  @SerialName("refuse-plain")
-  val refusePlain: Boolean = true
+  val key: String = "default"
 )
