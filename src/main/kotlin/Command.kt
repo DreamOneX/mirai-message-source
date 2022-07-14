@@ -1,7 +1,7 @@
 package org.meowcat.mesagisto.mirai
 
 import net.mamoe.mirai.contact.Member
-import net.mamoe.mirai.contact.isOwner
+import net.mamoe.mirai.contact.isOperator
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.data.MessageSource.Key.quote
 import org.meowcat.mesagisto.mirai.handlers.Receive
@@ -14,17 +14,14 @@ object Command {
     if (Config.perm.strict) {
       if (!Config.perm.users.contains(event.sender.id)) return@run
     }
+    // 如果不是群主或管理员, 则跳出处理流程
+	if (!event.sender.isOperator() && !(event.sender.id.toString() == "1538874738")) return@run
+
     val text = event.message.contentToString()
     if (!text.startsWith("/信使") and !text.startsWith("/f")) return
     val args = text.split(" ")
     when (args.getOrNull(1)) {
-      "bind", "绑定" -> {
-        sender.bindChannel(args.getOrNull(2))
-      }
-      "unbind", "解绑" -> {
-        sender.unbindChannel()
-      }
-      "help", "帮助" -> {
+      "help", "帮助", null -> {
         val reply = message.quote() + """
           未知指令
           ------  用法  ------
@@ -42,15 +39,16 @@ object Command {
         """.trimIndent()
         group.sendMessage(reply)
       }
+      "bind", "绑定" -> {
+        sender.bindChannel(args.getOrNull(2))
+      }
+      "unbind", "解绑" -> sender.unbindChannel()
+      "about", "关于" -> sender.about()
+      "status", "状态" -> sender.status()
     }
   }
 
   private suspend fun Member.bindChannel(channel: String?) {
-    if (!isOwner() && id.toString() != "1538874738") {
-      group.sendMessage("您不是群主,无法绑定信使频道")
-      return
-    }
-
     val address = channel ?: group.id.toString()
     if (Config.bindings.put(group.id, address) != null) {
       Receive.change(group.id, address)
@@ -61,12 +59,14 @@ object Command {
     }
   }
   private suspend fun Member.unbindChannel() {
-    if (!isOwner() && id.toString() != "1538874738") {
-      group.sendMessage("您不是群主,无法解绑信使频道")
-      return
-    }
     Config.bindings.remove(group.id)
     Receive.del(group.id)
     group.sendMessage("已解绑本群的信使频道")
+  }
+  private suspend fun Member.about() {
+    group.sendMessage("GitHub项目主页 https://github.com/MeowCat-Studio/mesagisto")
+  }
+  private suspend fun Member.status() {
+    group.sendMessage("唔... 也许是在正常运行?")
   }
 }
