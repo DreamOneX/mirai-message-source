@@ -9,6 +9,7 @@ import org.meowcat.mesagisto.client.data.* // ktlint-disable no-wildcard-imports
 import org.meowcat.mesagisto.client.data.Message
 import org.meowcat.mesagisto.mirai.*
 import org.meowcat.mesagisto.mirai.MultiBot.Listeners
+import org.meowcat.mesagisto.mirai.Config
 
 object MiraiListener {
   suspend fun handle(event: GroupMessageEvent) {
@@ -26,7 +27,7 @@ suspend fun sendHandler(
   // 若不是负责人则返回
 
   if (listener != bot) return
-  if (sender.id.toString() == "1606959418") return
+  if (sender.id.toString() in Config.blacklist) return
   // 保存聊天记录用于引用回复
   MiraiDb.putMsgSource(event.source)
   // 构建消息
