@@ -3,8 +3,9 @@ A implementation of message-forwarding-client.消息转发客户端的mirai(Tenc
 
 **自用，写死了。**  
 ~~以后可能会改成活的@_@~~
+你猜这句话还有用不
 ## 改动
-* `handler/Send.kt` 第30行  
+* ~~`handler/Send.kt` 第30行~~
 ```kotlin
 if (sender.id.toString() == "1606959418") return
 ```
