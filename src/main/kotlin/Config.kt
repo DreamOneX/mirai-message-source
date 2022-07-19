@@ -32,11 +32,13 @@ data class PermConfig(
 data class NatsConfig(
   val address: String = "nats://nats.mesagisto.org:4222"
 )
+
 @Serializable
 data class ProxyConfig(
   val enable: Boolean = false,
   val address: String = "http://127.0.0.1:7890"
 )
+
 @Serializable
 data class CipherConfig(
   val key: String = "default"
