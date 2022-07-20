@@ -8,8 +8,8 @@ import org.meowcat.mesagisto.client.* // ktlint-disable no-wildcard-imports
 import org.meowcat.mesagisto.client.data.* // ktlint-disable no-wildcard-imports
 import org.meowcat.mesagisto.client.data.Message
 import org.meowcat.mesagisto.mirai.*
-import org.meowcat.mesagisto.mirai.MultiBot.Listeners
 import org.meowcat.mesagisto.mirai.Config
+import org.meowcat.mesagisto.mirai.MultiBot.Listeners
 
 object MiraiListener {
   suspend fun handle(event: GroupMessageEvent) {
@@ -43,9 +43,9 @@ suspend fun sendHandler(
           MessageType.Text(it.content)
         } else null
       }
-	  is MarketFace -> {
-		MessageType.Text(it.name)
-	  }
+      is MarketFace -> {
+        MessageType.Text(it.name)
+      }
       is Image -> {
         val imageID = it.imageId.toByteArray()
         Res.storePhotoId(imageID)
