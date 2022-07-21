@@ -144,14 +144,14 @@ object Command {
   }
   private suspend fun Member.enable(type: String?) {
     when (type) {
-      null -> group.sendMessage("请提供参数channel或group")
+      null -> group.sendMessage("不可以冲多哒！这里没参数")
       "group", "群组" -> {
         if (Config.bindings.get(group.id) == null) {
-          group.sendMessage("此群组不存在信使频道，无需操作")
+          group.sendMessage("你是经常对着空气冲吗")
           return
         }
         if (!Config.disablegroup.contains(group.id)) {
-          group.sendMessage("此群组未禁用信使")
+          group.sendMessage("妄 想 症 or 意淫 ？")
           return
         }
         Config.disablegroup.remove(group.id)
@@ -159,12 +159,12 @@ object Command {
       }
       "channel", "频道" -> {
         if (Config.bindings.get(group.id) == null) {
-          group.sendMessage("此群组不存在信使频道，无需操作")
+          group.sendMessage("妄 想 症 or 意 淫 ？")
           return
         }
         val channel: String = Config.bindings.get(group.id).toString()
         if (!Config.disablechannel.contains(channel)) {
-          group.sendMessage("此频道mirai侧未禁用信使")
+          group.sendMessage("不要冲被冲过的东西")
           return
         }
         Config.disablechannel.remove(channel)
