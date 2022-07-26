@@ -53,43 +53,30 @@ private suspend fun leftSubHandler(
   target: Long
 ): Result<Unit> = runCatching fn@{
   val group = Speakers[target]?.random() ?: return@fn
-  if (Config.disablegroup.contains(group.id)) return@fn
-  if (Config.disablechannel.contains(Config.bindings.get(group.id))) return@fn
+  if (Config.disableGroup.contains(group.id)) return@fn
+  if (Config.disableChannel.contains(Config.bindings[group.id])) return@fn
   val senderName = with(message.profile) { nick ?: username ?: id.toString() }
   var chain = message.chain.flatMap map@{ it ->
     when (it) {
-      is MessageType.Text -> {
-        if (group.id.toString() == "712532719") {
-          if (it.content.startsWith("sync")) {
-            listOf(PlainText("$senderName : ${it.content}"))
-          } else {
-            listOf(PlainText("$senderName 在某个地方发了奇奇怪怪的消息"))
-          }
-        } else {
-          listOf(PlainText("$senderName : ${it.content}"))
-        }
-      }
+      is MessageType.Text -> listOf(PlainText("\n${it.content}"))
       is MessageType.Image -> {
-        if (group.id.toString() == "712532719") {
-          listOf(PlainText("$senderName 发了一张图片"))
+        val file = Cache.file(it.id, it.url, Config.mapper(group)!!).getOrThrow()
+        val image = if (file.isWebp()) {
+          Logger.debug { "图片为QQ不支持的WEBP格式,正在转为PNG格式..." }
+          Res.convertFile(it.id) { from, to ->
+            runCatching {
+              convertWebpToPng(from, to)
+            }
+          }.onFailure { Logger.error(it) }
+          file.toFile()
         } else {
-          val file = Cache.file(it.id, it.url, Config.mapper(group)!!).getOrThrow()
-          val image = if (file.isWebp()) {
-            Logger.debug { "图片为QQ不支持的WEBP格式,正在转化为PNG格式..." }
-            Res.convertFile(it.id) { from, to ->
-              runCatching {
-                convertWebpToPng(from, to)
-              }
-            }.onFailure { Logger.error(it) }
-            file.toFile()
-          } else {
-            file.toFile()
-          }.uploadAsImage(group)
-          listOf(PlainText("$senderName:"), image)
-        }
+          file.toFile()
+        }.uploadAsImage(group)
+        listOf(PlainText("\n"), image)
       }
     }
   }.toMessageChain()
+  chain = PlainText("$senderName: ").plus(chain)
   run {
     val replyId = message.reply ?: return@run
     val localId = Db.getMsgIdAsI32(target, replyId) ?: return@run

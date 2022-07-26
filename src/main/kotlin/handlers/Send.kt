@@ -1,5 +1,6 @@
 package org.meowcat.mesagisto.mirai.handlers
 
+import kotlinx.coroutines.launch
 import net.mamoe.mirai.contact.nameCardOrNick
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.data.* // ktlint-disable no-wildcard-imports
@@ -8,8 +9,6 @@ import org.meowcat.mesagisto.client.* // ktlint-disable no-wildcard-imports
 import org.meowcat.mesagisto.client.data.* // ktlint-disable no-wildcard-imports
 import org.meowcat.mesagisto.client.data.Message
 import org.meowcat.mesagisto.mirai.*
-import org.meowcat.mesagisto.mirai.Config
-import org.meowcat.mesagisto.mirai.MultiBot.Listeners
 
 object MiraiListener {
   suspend fun handle(event: GroupMessageEvent) {
@@ -22,12 +21,9 @@ suspend fun sendHandler(
 ): Unit = with(event) {
   // 获取目标群聊的信使地址,若不存在则返回
   val natsAddress = Config.bindings[subject.id] ?: return
-  // 获取目标群聊负责监听的Bot
-  val listener = Listeners.getOrPut(subject.id) { bot }
-  // 若不是负责人则返回
-
-  if (listener != bot) return
-  // 若在黑名单则返回
+  // 判断多Bot下是否改对该消息作出回应
+  if (!MultiBot.shouldReact(event.group, bot)) return
+  // 黑名单检查
   if (sender.id in Config.blacklist) return
   // 保存聊天记录用于引用回复
   MiraiDb.putMsgSource(event.source)
@@ -43,20 +39,23 @@ suspend fun sendHandler(
           MessageType.Text(it.content)
         } else null
       }
-      is MarketFace -> {
-        MessageType.Text(it.name)
-      }
       is Image -> {
         val imageID = it.imageId.toByteArray()
         Res.storePhotoId(imageID)
-        Cache.fileByUrl(imageID, it.queryUrl()).getOrThrow()
+        // 拼装消息与下载图片异步进行
+        Plugin.launch {
+          Cache.fileByUrl(imageID, it.queryUrl()).getOrThrow()
+        }
         MessageType.Image(imageID)
       }
       is FlashImage -> {
         val image = it.image
         val imageID = image.imageId.toByteArray()
         Res.storePhotoId(imageID)
-        Cache.fileByUrl(imageID, image.queryUrl()).getOrThrow()
+        // 拼装消息与下载图片异步进行
+        Plugin.launch {
+          Cache.fileByUrl(imageID, image.queryUrl()).getOrThrow()
+        }
         MessageType.Image(imageID)
       }
       is QuoteReply -> {
@@ -76,6 +75,7 @@ suspend fun sendHandler(
       sender.id.toByteArray(),
       // 等待Mirai实现QID
       sender.id.toString(),
+      // TODO Unicode空白控制符
       sender.nameCardOrNick.ifEmpty { null }
     ),
     id = msgId.toByteArray(),
