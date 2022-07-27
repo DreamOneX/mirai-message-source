@@ -66,7 +66,9 @@ suspend fun sendHandler(
       is At -> {
         MessageType.Text(it.contentToString())
       }
-      else -> null
+      else -> {
+        MessageType.Text("unsupported message")
+      }
     }
   }
 
