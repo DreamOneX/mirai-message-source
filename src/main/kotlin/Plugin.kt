@@ -2,6 +2,7 @@ package org.meowcat.mesagisto.mirai
 
 import kotlinx.coroutines.launch
 import net.mamoe.mirai.console.command.CommandManager
+import net.mamoe.mirai.console.extension.PluginComponentStorage
 import net.mamoe.mirai.console.permission.AbstractPermitteeId
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionService
@@ -17,17 +18,28 @@ import org.meowcat.mesagisto.client.*
 import org.meowcat.mesagisto.mirai.handlers.MiraiListener
 import org.meowcat.mesagisto.mirai.handlers.Receive
 import javax.imageio.ImageIO
+import kotlin.io.path.*
 
 object Plugin : KotlinPlugin(
   JvmPluginDescription(
-    id = "org.meowcat.mesagisto",
-    name = "Mesagisto",
+    id = "org.mesagisto.mirai-message-source",
+    name = "Mesagisto-Mirai",
     version = "1.0-unknown"
   )
 ) {
   private val eventChannel = globalEventChannel()
   private val listeners: MutableList<Listener<*>> = arrayListOf()
 
+  override fun PluginComponentStorage.onLoad() {
+    // prepare for next version
+    val oldConfig = Path("config/org.meowcat.mesagisto/mesagisto.yml")
+    if (oldConfig.exists()) {
+      val newConfig = Path("config/org.mesagisto.mirai-message-source/config.yml")
+      newConfig.parent.createDirectories()
+      oldConfig.moveTo(newConfig, true)
+      oldConfig.parent.deleteIfExists()
+    }
+  }
   override fun onEnable() {
     Config.reload()
     Config.migrate()
@@ -76,9 +88,10 @@ object Plugin : KotlinPlugin(
       Logger.info { "信使的严格模式已关闭, 信使指令可被任意用户调用, 但敏感操作仅允许群组管理员进行." }
       service.permit(AbstractPermitteeId.AnyUser, Plugin.parentPermission)
     }
-    if (PluginManager.plugins.find {
-      it.id == "net.mamoe.mirai.console.chat-command"
-    } == null
+    if (
+      PluginManager.plugins.find {
+        it.id == "net.mamoe.mirai.console.chat-command"
+      } == null
     ) {
       Logger.error { "注册指令成功, 但依赖需要 chat-command,否则无法在聊天环境内执行命令" }
     } else {
