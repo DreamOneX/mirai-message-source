@@ -77,10 +77,8 @@ object Plugin : KotlinPlugin(
       add(eventChannel.subscribeAlways(MultiBot::handleBotOnline))
       add(eventChannel.subscribeAlways(MultiBot::handleBotJoinGroup))
     }
-    if (Config.enableNudge) {
-      eventChannel.subscribeAlways<NudgeEvent> {
-        subject.sendMessage("唔...可能是在正常运行？")
-      }
+    eventChannel.subscribeAlways<NudgeEvent> {
+      if (Config.enableNudge) subject.sendMessage("唔...可能是在正常运行？")
     }
     CommandManager.registerCommand(Command)
     val service: PermissionService<Permission> = PermissionService.INSTANCE as PermissionService<Permission>
