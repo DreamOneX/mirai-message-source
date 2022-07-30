@@ -74,6 +74,10 @@ suspend fun sendHandler(
     }
   }
 
+  if (chain == null) {
+    return;
+  }
+
   val message = Message(
     profile = Profile(
       sender.id.toByteArray(),
