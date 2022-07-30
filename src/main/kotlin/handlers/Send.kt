@@ -66,6 +66,9 @@ suspend fun sendHandler(
       is At -> {
         MessageType.Text(it.contentToString())
       }
+      is Face -> {
+        MessageType.Text(it.contentToString())
+      }
       else -> null
     }
   }
