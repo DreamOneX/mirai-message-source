@@ -7,10 +7,19 @@ plugins {
 
   id("me.him188.maven-central-publish") version "1.0.0-dev-3"
   id("io.codearte.nexus-staging") version "0.30.0"
+  id("com.github.gmazzo.buildconfig") version "3.1.0"
 }
 group = "org.mesagisto"
-version = "1.5.2"
-
+version = "1.5.4"
+buildConfig {
+  var version = System.getenv("VERSION")
+  version = if (version == null) {
+    project.version.toString()
+  } else {
+    "${project.version}-$version"
+  }
+  buildConfigField("String", "VERSION", provider { "\"${version}\"" })
+}
 mavenCentralPublish {
   nexusStaging {
     serverUrl = "https://s01.oss.sonatype.org/service/local/"

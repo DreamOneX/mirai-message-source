@@ -18,6 +18,7 @@ import org.fusesource.leveldbjni.internal.NativeDB
 import org.meowcat.mesagisto.client.*
 import org.meowcat.mesagisto.mirai.handlers.Receive
 import org.meowcat.mesagisto.mirai.handlers.sendHandler
+import org.mesagisto.mirai_message_source.BuildConfig
 import javax.imageio.ImageIO
 import kotlin.io.path.*
 
@@ -25,7 +26,7 @@ object Plugin : KotlinPlugin(
   JvmPluginDescription(
     id = "org.mesagisto.mirai-message-source",
     name = "Mesagisto-Mirai",
-    version = "1.0-unknown"
+    version = BuildConfig.VERSION
   )
 ) {
   private val eventChannel = globalEventChannel()
@@ -41,7 +42,7 @@ object Plugin : KotlinPlugin(
       oldConfig.parent.toFile().deleteRecursively()
     }
   }.onFailure {
-    println(it) // TODO
+    println(it) // TODO will it fails again?
   }.getOrDefault(Unit)
   override fun onEnable() {
     Config.reload()
@@ -77,9 +78,10 @@ object Plugin : KotlinPlugin(
       add(eventChannel.subscribeAlways(MultiBot::handleBotOnline))
       add(eventChannel.subscribeAlways(MultiBot::handleBotJoinGroup))
     }
-    eventChannel.subscribeAlways<NudgeEvent> {
-      // if (Config.enableNudge)
-      subject.sendMessage("唔...可能是在正常运行？")
+    if (Config.enableNudge) {
+      eventChannel.subscribeAlways<NudgeEvent> {
+        subject.sendMessage("唔...可能是在正常运行？")
+      }
     }
     CommandManager.registerCommand(Command)
     val service: PermissionService<Permission> = PermissionService.INSTANCE as PermissionService<Permission>
