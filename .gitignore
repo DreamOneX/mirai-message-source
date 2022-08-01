@@ -15,3 +15,6 @@ packages
 .project
 .settings
 bin/
+.project
+bin/
+.settings
